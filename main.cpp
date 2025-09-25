@@ -6,10 +6,12 @@ int cantidadInventario = 5;
 
 // defino el prototipo de las funciones de la aplicación
 void inicio();
-void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *precio);
-void generarReporte(int *codigo, std::string *nombre, int *cantidad, float *precio);
-void encontrarMasCaro(int *codigo, std::string *nombre, int *cantidad, float *precio);
-void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float *precio);
+void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string *ubicacionAlmacen);
+void generarReporte(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
+void encontrarMasCaro(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
+void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
+void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
+void reporteBajoStock(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
 
 
 int main() {
@@ -72,6 +74,17 @@ void inicio(){
 
     }; 
 
+    // arreglo de la ubicación del almacén
+    std::string ubicacionAlmacen[100] = {
+
+        "A-01",
+        "B-01",
+        "B-02",
+        "C-03",
+        "C-02"
+
+    };
+
     // esta variable determinará si continuar el loop de la aplicación o no dependiendo de la elección del usuario.
     bool continuarEjecucion = true; 
 
@@ -81,7 +94,7 @@ void inicio(){
         int decision;
 
         std::cout << "\n-- Bienvenido al Sistema de Inventario de " << '"' << "El Martillo" << '"' << " --\n" << std::endl;
-        std::cout << "Seleccione una opción:\n1. Consultar un producto\n2. Actualizar Inventario\n3. Generar reporte completo\n4. Encontrar el producto más caro\n5. Salir" << std::endl;
+        std::cout << "Seleccione una opción:\n1. Consultar un producto\n2. Actualizar Inventario por Ubicación\n3. Registrar un nuevo producto\n4. Generar reporte completo\n5. Generar reporte de bajo stock\n6. Encontrar el producto más caro\n7. Salir" << std::endl;
 
         std::cin >> decision; // se espera el input del usuario.
 
@@ -92,27 +105,36 @@ void inicio(){
             // si el usuario decidió consultar un producto.
             case 1:
 
-                consultarProducto(codigoProducto, nombreProducto, cantidadStock, precioUnitario);
+                consultarProducto(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
                 break;
         
 
             // si el usuario decidió actualizar el inventario.
             case 2:
-                actualizarInventario(codigoProducto, nombreProducto, cantidadStock, precioUnitario);
+                actualizarInventario(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
+                break;
+
+            // si el usuario decidió registrar un nuevo producto.
+            case 3:
+                registrarNuevo(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
                 break;
             
             // si el usuario decidió generar reporte completo.
-            case 3:
-                generarReporte(codigoProducto, nombreProducto, cantidadStock, precioUnitario);
+            case 4:
+                generarReporte(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
+                break;
+
+            // si el usuario decide generar un reporte de bajo stock.
+            case 5:
                 break;
 
             // si el usuario decidió encontrar el producto más caro.
-            case 4:
-                encontrarMasCaro(codigoProducto, nombreProducto, cantidadStock, precioUnitario);
+            case 6:
+                encontrarMasCaro(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
                 break;
 
             // si el usuario decidió terminar el programa.
-            case 5:
+            case 7:
                 std::cout << "Gracias por utilizar el Sistema de Inventario de El Martillo, Desarrollado por Mauricio Manzur" << std::endl;
                 continuarEjecucion = false;
                 break;
@@ -129,7 +151,7 @@ void inicio(){
 }
 
 // funcion para consultar productos, le pide al usuario el codigo que quiere encontrar, y se lo muestra en pantalla.
-void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *precio){
+void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
     int codigoABuscar = 0; // en esta varible se almacenará el codigo que el usuario determine para encontrar el producto.
 
@@ -153,6 +175,7 @@ void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *p
             std::cout << "Nombre: " << nombre[i] << std::endl;
             std::cout << "Cantidad en Stock: " << cantidad[i] << std::endl;
             std::cout << "Precio unitario: $" << precio[i] << std::endl;
+            std::cout << "Ubicación Almacen: " << ubicacionAlmacen[i] << std::endl; 
 
 
 
@@ -172,16 +195,16 @@ void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *p
 }
 
 // función para generar un reporte general con la información de todos los elementos del inventario de El Martillo.
-void generarReporte(int *codigo, std::string *nombre, int *cantidad, float *precio){
+void generarReporte(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
     std::cout << "--- Reporte de Inventario ---" << std::endl;
-    std::cout << "Código | Nombre                    | Stock | Precio" << std::endl;
+    std::cout << "Código | Nombre                    | Stock | Precio | Ubicación Almacén" << std::endl;
     std::cout << "------------------------------------------------------" << std::endl;
     
     // mostrar todos los datos de cada elemento del inventario.
     for(int i = 0; i < cantidadInventario; i++){
 
-        std::cout << codigo[i] << "    | " << nombre[i] << "            | " << cantidad[i] << " | $" << precio[i] << std::endl;
+        std::cout << codigo[i] << "    | " << nombre[i] << "            | " << cantidad[i] << " | $" << precio[i] << "| " << ubicacionAlmacen[i] << std::endl;
 
     }
 
@@ -192,7 +215,7 @@ void generarReporte(int *codigo, std::string *nombre, int *cantidad, float *prec
 }
 
 // funcion que encuentra el elemento más caro de todos en el arreglo.
-void encontrarMasCaro(int *codigo, std::string *nombre, int *cantidad, float *precio){
+void encontrarMasCaro(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
     // esta variable representa el valor final de la cantidad encontrada (se espera que la variable almacene el precio más alto al final del ciclo)
     float buscadorMaximo = 0;
@@ -249,26 +272,27 @@ void encontrarMasCaro(int *codigo, std::string *nombre, int *cantidad, float *pr
 
 
 // funcion que actualiza el stock del inventario.
-void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float *precio){
+void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
+
+    bool siEncontro = false; // esta variable determina si se encontró o no el producto por la ubicacion
+
+    int indicePerteneciente = 0; // esta variable almacenará el indice del cual pertenece el objeto con la ubicacion dada.
     
     int numeroABuscar = 0; // en esta variable se almacenará el código que proporcione el usuario.
 
-    int indiceEncontrado = 0; // esta variable almacena el indice en donde se encuentra el elemento con el código que el usuario especificó
+    std::string buscarUbicacion;
 
-    bool siEncontro = false; // esta variable cambiará a true siempre y cuando si se encuentre el item.
+    std::cout << "\nIngrese la ubicación del producto a encontrar: ";
+    std::cin.ignore();
+    std::getline(std::cin, buscarUbicacion);
 
+    for(int i = 0; i < cantidadInventario; i++){
 
-    std::cout << "Ingrese el código del producto a actualizar: ";
-    std::cin >> numeroABuscar; // se espera input de usuario.
+        // si buscarUbicacion es igual a ubicacionAlmacen en el indice i
+        if(buscarUbicacion.compare(ubicacionAlmacen[i]) == 0){
 
-    // verificar si el codigo existe.
-    for(int i = 0; i < cantidadInventario; i ++){
-
-        if(numeroABuscar == codigo[i]){
-
-            indiceEncontrado = i; // guardamos el indice en donde se encuentra el codigo.
             siEncontro = true;
-            break;
+            indicePerteneciente = i; // asignamos el valor del indice que pertenece 
 
         }
 
@@ -277,23 +301,15 @@ void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float
     // continuar con el siguiente paso en caso de si haberse encontrado el elemento.
     if(siEncontro){
 
-        int cantidadStock = 0; // esta variable guardará la cantidad de stock que el usuario decida actualizar del producto.
+        int nuevoStock = 0;
 
-        std::cout << "\nDetermina el stock del producto " << nombre[indiceEncontrado] << ": "; 
-        std::cin >> cantidadStock; // se espera input de usuario.
+        std::cout << "\nIngrese la cantidad a agregar/quitar(+/-): ";
+        std::cin >> nuevoStock;
+        
+        cantidad[indicePerteneciente] += nuevoStock;
 
-        if(cantidadStock < 0){
+        std::cout << "\nCantidad actualizada exitosamente. El nuevo stock de " << nombre[indicePerteneciente] <<"  es " << cantidad[indicePerteneciente] << "." << std::endl;
 
-            std::cout << "\nNo se permite una cantidad menor a 0, no se aplicará el nuevo cambio.\n" << std::endl;
-
-        }
-
-        else{
-
-            cantidad[indiceEncontrado] = cantidadStock;
-            std::cout << "\nSe asignó la cantidad de: " << cantidadStock << " al producto " << nombre[indiceEncontrado] << "\n" << std::endl;
-
-        }
 
     }
 
@@ -304,7 +320,124 @@ void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float
 
     }
 
+}
+
+// funcion para registrar un nuevo producto en la lista
+void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string *ubicacionAlmacen){
+
+    bool codigoRepetido = false;
+    int confirmarProducto = 0; 
+
+    int codigoNuevo;
+    std::string nombreNuevo;
+    int stockNuevo;
+    float precioNuevo;
+    std::string ubicacionNuevo;
 
 
+    std::cout << "\nRegistrar un nuevo producto:\n" << std::endl;
+    std::cout << "¿Cuál es el código del producto?" << std::endl;
+    std::cin >> codigoNuevo;
+
+    for(int i = 0; i < cantidadInventario; i++){
+
+        if(codigoNuevo == codigo[i]){
+
+            codigoRepetido = true;
+
+        }
+
+    }
+
+    if(codigoRepetido){
+
+        std::cout << "\nEl código " << codigoNuevo << " ya se ecuentra tomado por otro producto, no se aplicará la operación." << std::endl;
+
+    }
+
+    else{
+
+        std::cout << "¿Cuál es el nombre del producto?" << std::endl;
+        std::cin.ignore();
+        std::getline(std::cin, nombreNuevo);
+
+        std::cout << "¿Cuál es el stock inicial del producto?" << std::endl;
+        std::cin >> stockNuevo;
+        std::cin.ignore();
+
+
+        std::cout << "¿Cuál es el precio unitario del producto?" << std::endl;
+        std::cin >> precioNuevo;
+        std::cin.ignore();
+
+
+        std::cout << "¿Cuál es el código del almacen en el que se encuentra ubicado?" << std::endl;
+        std::cin.ignore();
+        std::getline(std::cin, ubicacionNuevo);
+
+
+
+        std::cout << "\nInformación previsualizadora:\nCódigo: " << codigoNuevo << "\nNombre: " << nombreNuevo << "\nStock: " << stockNuevo << "\nPrecio Unitario: " << precioNuevo << "\nUbicación Almacén: " << ubicacionNuevo << std::endl;
+        
+        std::cout << "\n\n¿Aceptas el nuevo producto?\n1. Si\n2. No" << std::endl;
+        std::cin >> confirmarProducto;
+        std::cin.ignore();
+
+
+        switch (confirmarProducto)
+        {
+            case 1:
+
+                // si el usuario esta de acuerdo con el nuevo producto, entonces agregarlo al arreglo.
+
+                // la variable cantidadInventario almacena la cantidad de elementos que se encuentran en arreglo, siguiendo con la lógica
+                // donde los indices son = al tamaño - 1, agregar un elemento al ultimo indice es 4 y cantidadInventario = cantidad de elementos = 5, entonces cantidadInventario se agregarn los elementos nuevos.
+
+
+                codigo[cantidadInventario] = codigoNuevo;
+                nombre[cantidadInventario] = nombreNuevo;
+                cantidad[cantidadInventario] = stockNuevo;
+                precio[cantidadInventario] = precioNuevo;
+                ubicacionAlmacen[cantidadInventario] = ubicacionNuevo;
+
+                cantidadInventario++;
+
+
+                std::cout << "Se han agregado los elementos correctamente." << std::endl; 
+                break;
+
+            case 2:
+                std::cout << "\nCancelando operación" << std::endl;
+                break;
+
+        
+            default:
+                std::cout << "\nIngrese una opción válida" << std::endl;
+                break;
+        }
+
+    }
+    
+
+}
+
+// función que genera un reporte de todos los productos en un bajo umbral predefinido.
+void reporteBajoStock(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
+
+    // int umbralDefinido = 0;
+
+    // std::cout << "\nIngrese el umbral numérico para listar los productos: ";
+    // std::cin >> umbralDefinido;
+
+    // std::cout << "--- Reporte de Inventario ---" << std::endl;
+    // std::cout << "Código | Nombre                    | Stock | Precio | Ubicación Almacén" << std::endl;
+    // std::cout << "------------------------------------------------------" << std::endl;
+    
+
+    // for(int i = 0; i < cantidadInventario; i++){
+
+    //     if()
+
+    // }
 
 }
