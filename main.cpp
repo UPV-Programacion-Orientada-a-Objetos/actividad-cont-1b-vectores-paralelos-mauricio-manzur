@@ -12,6 +12,7 @@ void encontrarMasCaro(int *codigo, std::string *nombre, int *cantidad, float *pr
 void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
 void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
 void reporteBajoStock(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
+void encontrarMasBarato(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
 
 
 int main() {
@@ -126,6 +127,7 @@ void inicio(){
 
             // si el usuario decide generar un reporte de bajo stock.
             case 5:
+                reporteBajoStock(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
                 break;
 
             // si el usuario decidió encontrar el producto más caro.
@@ -424,20 +426,32 @@ void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *prec
 // función que genera un reporte de todos los productos en un bajo umbral predefinido.
 void reporteBajoStock(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
-    // int umbralDefinido = 0;
+    int umbralDefinido = 0;
 
-    // std::cout << "\nIngrese el umbral numérico para listar los productos: ";
-    // std::cin >> umbralDefinido;
+    std::cout << "\nIngrese el umbral numérico para listar los productos: ";
+    std::cin >> umbralDefinido;
 
-    // std::cout << "--- Reporte de Inventario ---" << std::endl;
-    // std::cout << "Código | Nombre                    | Stock | Precio | Ubicación Almacén" << std::endl;
-    // std::cout << "------------------------------------------------------" << std::endl;
+    std::cout << "--- Reporte de Inventario ( stock menor a " << umbralDefinido << ") ---" << std::endl;
+    std::cout << "Código | Nombre                    | Stock | Precio | Ubicación Almacén" << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
     
 
-    // for(int i = 0; i < cantidadInventario; i++){
+    for(int i = 0; i < cantidadInventario; i++){
 
-    //     if()
+        if(cantidad[i] < umbralDefinido){
 
-    // }
+            std::cout << codigo[i] << " | " << nombre[i] << " | " << cantidad[i] << " | " << precio[i] << " | " << ubicacionAlmacen[i] << std::endl;
+
+        }
+
+    }
+
+}
+
+// funcion que encuentra el producto más barato.
+
+void encontrarMasBarato(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
+
+    // float buscadorMinimo = 500000; 
 
 }
