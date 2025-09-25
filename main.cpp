@@ -67,7 +67,7 @@ void inicio(){
     // arreglo precio unitario
     float precioUnitario[100] = {
 
-        612.48,
+        12.48,
         1607.76,
         1224.96,
         1122.88,
@@ -95,7 +95,7 @@ void inicio(){
         int decision;
 
         std::cout << "\n-- Bienvenido al Sistema de Inventario de " << '"' << "El Martillo" << '"' << " --\n" << std::endl;
-        std::cout << "Seleccione una opción:\n1. Consultar un producto\n2. Actualizar Inventario por Ubicación\n3. Registrar un nuevo producto\n4. Generar reporte completo\n5. Generar reporte de bajo stock\n6. Encontrar el producto más caro\n7. Salir" << std::endl;
+        std::cout << "Seleccione una opción:\n1. Consultar un producto\n2. Actualizar Inventario por Ubicación\n3. Registrar un nuevo producto\n4. Generar reporte completo\n5. Generar reporte de bajo stock\n6. Encontrar el producto más caro\n7. Encontrar el producto más barato\n8. Salir" << std::endl;
 
         std::cin >> decision; // se espera el input del usuario.
 
@@ -135,8 +135,13 @@ void inicio(){
                 encontrarMasCaro(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
                 break;
 
-            // si el usuario decidió terminar el programa.
+            // si el usuario decide encontrar el numero mas barato.
             case 7:
+                encontrarMasBarato(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
+                break;
+
+            // si el usuario decidió terminar el programa.
+            case 8:
                 std::cout << "Gracias por utilizar el Sistema de Inventario de El Martillo, Desarrollado por Mauricio Manzur" << std::endl;
                 continuarEjecucion = false;
                 break;
@@ -452,6 +457,32 @@ void reporteBajoStock(int *codigo, std::string *nombre, int *cantidad, float *pr
 
 void encontrarMasBarato(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
-    // float buscadorMinimo = 500000; 
+    // ** siguiendo el mismo principio de la funcion encontrarMasCaro, pero al reves... **
+
+    float buscadorMinimo = 500000; // este valor es un ejemplo.
+
+    for(int i = 0; i < cantidadInventario; i++){
+
+        for(int j = 0; j < cantidadInventario; j++){
+
+            if(precio[i] > precio[j] && buscadorMinimo > precio[j]){
+
+                buscadorMinimo = precio[j];
+
+            }
+
+        }
+
+    }
+
+    for(int i = 0; i < cantidadInventario; i ++){
+
+        if(precio[i] == buscadorMinimo){
+
+            std::cout << "El producto más barato es: " << nombre[i] << " con un precio de $" << precio[i] << std::endl;            
+
+        }
+
+    }    
 
 }
