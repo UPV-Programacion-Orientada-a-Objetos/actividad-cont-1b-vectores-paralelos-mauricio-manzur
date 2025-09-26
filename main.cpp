@@ -1,8 +1,8 @@
 #include <iostream>
-
+#include <fstream>
 
 // esta variable guardián establece cuantos elementos hay actualmente en los arreglos (sirve para hacer los ciclos for menos pesados)
-int cantidadInventario = 5;
+int cantidadInventario = 0;
 
 // defino el prototipo de las funciones de la aplicación
 void inicio();
@@ -13,6 +13,8 @@ void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float
 void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
 void reporteBajoStock(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
 void encontrarMasBarato(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
+void guardarDatos(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
+void obtenerDatos(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen);
 
 
 int main() {
@@ -25,6 +27,7 @@ int main() {
 
 // funcion principal que muestra el menu principal y la lista de opciónes para que el usuario elija también crea los arreglos paralelos que almacenan la información.
 void inicio(){
+    
 
     // arreglo codigo de producto
     int codigoProducto[100] = {
@@ -53,38 +56,16 @@ void inicio(){
     }; 
 
     // arreglo cantidad en stock
-    int cantidadStock[100] = {
-
-        10,
-        5,
-        35,
-        15,
-        28
-
-
-    }; 
+    int cantidadStock[100] = {}; 
 
     // arreglo precio unitario
-    float precioUnitario[100] = {
-
-        12.48,
-        1607.76,
-        1224.96,
-        1122.88,
-        150.00
-
-    }; 
+    float precioUnitario[100] = {}; 
 
     // arreglo de la ubicación del almacén
-    std::string ubicacionAlmacen[100] = {
+    std::string ubicacionAlmacen[100] = {};
 
-        "A-01",
-        "B-01",
-        "B-02",
-        "C-03",
-        "C-02"
-
-    };
+    // obtener los datos y almacenarlos en los arreglos.
+    obtenerDatos(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen); 
 
     // esta variable determinará si continuar el loop de la aplicación o no dependiendo de la elección del usuario.
     bool continuarEjecucion = true; 
@@ -95,7 +76,7 @@ void inicio(){
         int decision;
 
         std::cout << "\n-- Bienvenido al Sistema de Inventario de " << '"' << "El Martillo" << '"' << " --\n" << std::endl;
-        std::cout << "Seleccione una opción:\n1. Consultar un producto\n2. Actualizar Inventario por Ubicación\n3. Registrar un nuevo producto\n4. Generar reporte completo\n5. Generar reporte de bajo stock\n6. Encontrar el producto más caro\n7. Encontrar el producto más barato\n8. Salir" << std::endl;
+        std::cout << "Seleccione una opción:\n1. Consultar un producto\n2. Actualizar Inventario por Ubicación\n3. Registrar un nuevo producto\n4. Generar reporte completo\n5. Generar reporte de bajo stock\n6. Encontrar el producto más caro\n7. Encontrar el producto más barato\n8. Guardar y Salir" << std::endl;
 
         std::cin >> decision; // se espera el input del usuario.
 
@@ -142,6 +123,8 @@ void inicio(){
 
             // si el usuario decidió terminar el programa.
             case 8:
+
+                guardarDatos(codigoProducto, nombreProducto, cantidadStock, precioUnitario, ubicacionAlmacen);
                 std::cout << "Gracias por utilizar el Sistema de Inventario de El Martillo, Desarrollado por Mauricio Manzur" << std::endl;
                 continuarEjecucion = false;
                 break;
@@ -183,8 +166,6 @@ void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *p
             std::cout << "Cantidad en Stock: " << cantidad[i] << std::endl;
             std::cout << "Precio unitario: $" << precio[i] << std::endl;
             std::cout << "Ubicación Almacen: " << ubicacionAlmacen[i] << std::endl; 
-
-
 
         }
 
@@ -323,7 +304,7 @@ void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float
     // si no se llego a encontrar un elemento en la lista, mostrar un mensaje de error.
     else{
 
-        std::cout << "\nNo se encontró el elemento con código: " << numeroABuscar << std::endl; 
+        std::cout << "\nNo se encontró el elemento con ubicación: " << buscarUbicacion << std::endl; 
 
     }
 
@@ -379,7 +360,6 @@ void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *prec
 
 
         std::cout << "¿Cuál es el código del almacen en el que se encuentra ubicado?" << std::endl;
-        std::cin.ignore();
         std::getline(std::cin, ubicacionNuevo);
 
 
@@ -484,5 +464,105 @@ void encontrarMasBarato(int *codigo, std::string *nombre, int *cantidad, float *
         }
 
     }    
+
+}
+
+// funcion para guardar los datos en un archivo 
+void guardarDatos(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
+
+
+    std::ofstream archivo("guardado.txt");
+
+    if(archivo.is_open()){
+
+        for(int i = 0; i < cantidadInventario; i++){
+
+            archivo << codigo[i] << "," << nombre[i] << "," << cantidad[i] << "," << precio[i] << "," << ubicacionAlmacen[i] << std::endl;
+
+        }
+
+    }
+
+}
+
+// funcion para obtener los datos del archivo de guardado.txt
+void obtenerDatos(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
+
+
+    std::cout << "\nCargando inventario desde " << "'" << "guardado.txt" << "'" << std::endl; 
+
+    std::ifstream archivo("guardado.txt");
+
+    std::string dato; // almacena la cadena entera antes del \n, ejemplo: codigo,nombre,cantidad,precio,ubicacionAlmacen.
+
+    int indiceGuardian[4] = {}; // almacena los indices de cada coma en la cadena dato.
+
+
+    if(!archivo.is_open()){
+
+        std::cout << "\nNo se pudieron cargar los datos del archivo de guardado." << std::endl;
+
+    }
+
+    else{
+
+        while(std::getline(archivo, dato)){
+
+            int contador = 0;
+
+            for(long unsigned int i = 0; i < dato.length(); i++){
+
+                if(dato[i] == ','){
+
+                    indiceGuardian[contador] = i; // guardar el indice en donde se encuentra ',' en el arreglo indiceGuardian[i].
+                    contador++;
+
+                }
+
+            }
+
+            // quebrar las cadenas en partes basandose en los indices de las comas en indiceGuardian.
+            std::string codigoEncontrado = dato.substr(0, indiceGuardian[0]);
+            std::string nombreEncontrado = dato.substr(indiceGuardian[0]+1, indiceGuardian[1]-1 - indiceGuardian[0]);
+            std::string cantidadEncontrado = dato.substr(indiceGuardian[1]+1, indiceGuardian[2]-1 - indiceGuardian[1]);
+            std::string precioEncontrado = dato.substr(indiceGuardian[2]+1, indiceGuardian[3]-1 - indiceGuardian[2]);
+            std::string ubicacionEncontrado = dato.substr(indiceGuardian[3]+1);
+
+
+            try{
+                
+                // agregar todos los elementos en el indice cantidadInventarios que aumenta al asignar todos sus valores
+                // std::stoi me permite convertir una cadena de texto en entero, std::stof permite cambiar una cadena en float.
+                codigo[cantidadInventario] = std::stoi(codigoEncontrado);
+                nombre[cantidadInventario] = nombreEncontrado;
+                cantidad[cantidadInventario] = std::stoi(cantidadEncontrado);
+                precio[cantidadInventario] = std::stof(precioEncontrado);
+                ubicacionAlmacen[cantidadInventario] = ubicacionEncontrado;
+                    
+                cantidadInventario++;
+
+            }
+
+            catch(std::exception &e){
+
+                std::cout << "\nHubo un error con la obtención de los datos: " << e.what() << std::endl;
+
+            }
+
+        }
+
+        if(cantidadInventario > 0){
+
+            std::cout << "Inventario cargado exitosamente. " << cantidadInventario << " productos encontrados." << std::endl;
+
+        }
+        else{
+
+            std::cout << "No se encontraron productos en el archivo de guardado.txt" << std::endl;
+
+        }
+        
+    }
+
 
 }
