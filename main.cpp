@@ -73,16 +73,32 @@ void inicio(){
 
     while(continuarEjecucion){
 
-        int decision;
+        std::string decision;
+        int decisionNum;
 
         std::cout << "\n-- Bienvenido al Sistema de Inventario de " << '"' << "El Martillo" << '"' << " --\n" << std::endl;
         std::cout << "Seleccione una opción:\n1. Consultar un producto\n2. Actualizar Inventario por Ubicación\n3. Registrar un nuevo producto\n4. Generar reporte completo\n5. Generar reporte de bajo stock\n6. Encontrar el producto más caro\n7. Encontrar el producto más barato\n8. Guardar y Salir" << std::endl;
 
         std::cin >> decision; // se espera el input del usuario.
+        std::cin.ignore();
+
 
         std::cout << "\nOpción seleccionada: " << decision << '\n' << std::endl; // mostrarle al usuario que elección seleccionó.
 
-        switch (decision)
+        try{
+
+            decisionNum = std::stoi(decision);
+
+        }
+
+        catch(std::exception&e){
+
+            std::cout << "\nIngrese una opción válida.\n" << std::endl;
+            continue;
+
+        }
+
+        switch (decisionNum)
         {
             // si el usuario decidió consultar un producto.
             case 1:
@@ -132,7 +148,6 @@ void inicio(){
             // si no fue ninguna de estas opciones.
             default:
                 std::cout << "Ingrese una opción válida\n" << std::endl;
-                continuarEjecucion = false;
                 break;
         }
 
@@ -143,13 +158,28 @@ void inicio(){
 // funcion para consultar productos, le pide al usuario el codigo que quiere encontrar, y se lo muestra en pantalla.
 void consultarProducto(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
+    std::string codigoString;
     int codigoABuscar = 0; // en esta varible se almacenará el codigo que el usuario determine para encontrar el producto.
 
     // esta variable booleana observará si un producto sí se llegó a encontrar con el codigo que estableció el usuario, en caso de que no, le muestra un mensaje de error claro. 
     bool siEncontro = false; 
 
     std::cout << "Ingrese el código del producto a consultar: ";
-    std::cin >> codigoABuscar; // se espera input del usuario.
+    std::cin >> codigoString;
+    std::cin.ignore();
+
+    try{
+
+        codigoABuscar = std::stoi(codigoString);
+        
+    }
+
+    catch(std::exception &e){
+
+        std::cout << "\nIngrese una opción válida.\n" << std::endl;
+        return;
+
+    }
 
     // buscar en cada indice del arreglo codigo si el codigo a buscar coincide con él.
     for(int i = 0; i < cantidadInventario; i++){
@@ -265,13 +295,12 @@ void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float
     bool siEncontro = false; // esta variable determina si se encontró o no el producto por la ubicacion
 
     int indicePerteneciente = 0; // esta variable almacenará el indice del cual pertenece el objeto con la ubicacion dada.
-    
+
     int numeroABuscar = 0; // en esta variable se almacenará el código que proporcione el usuario.
 
     std::string buscarUbicacion;
 
     std::cout << "\nIngrese la ubicación del producto a encontrar: ";
-    std::cin.ignore();
     std::getline(std::cin, buscarUbicacion);
 
     for(int i = 0; i < cantidadInventario; i++){
@@ -289,15 +318,37 @@ void actualizarInventario(int *codigo, std::string *nombre, int *cantidad, float
     // continuar con el siguiente paso en caso de si haberse encontrado el elemento.
     if(siEncontro){
 
+        std::string stockString;
         int nuevoStock = 0;
 
         std::cout << "\nIngrese la cantidad a agregar/quitar(+/-): ";
-        std::cin >> nuevoStock;
-        
+
+    
+        std::cin >> stockString;
+        std::cin.ignore();
+
+        try{
+
+            nuevoStock = std::stoi(stockString);
+            
+        }
+
+        catch(std::exception &e){
+
+            std::cout << "\nNo ingresó una cantidad válida, se cancelará la operación." << std::endl;
+            return;
+
+        }
+
         cantidad[indicePerteneciente] += nuevoStock;
 
-        std::cout << "\nCantidad actualizada exitosamente. El nuevo stock de " << nombre[indicePerteneciente] <<"  es " << cantidad[indicePerteneciente] << "." << std::endl;
+        if (cantidad[indicePerteneciente] < 0){
 
+            cantidad[indicePerteneciente] = 0;
+
+        }
+
+        std::cout << "\nCantidad actualizada exitosamente. El nuevo stock de " << nombre[indicePerteneciente] <<"  es " << cantidad[indicePerteneciente] << "." << std::endl;
 
     }
 
@@ -317,15 +368,36 @@ void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *prec
     int confirmarProducto = 0; 
 
     int codigoNuevo;
+    std::string codigoNuevoString;
+
     std::string nombreNuevo;
+
     int stockNuevo;
+    std::string stockNuevoString;
+
     float precioNuevo;
+    std::string precioNuevoString;
+
     std::string ubicacionNuevo;
 
 
     std::cout << "\nRegistrar un nuevo producto:\n" << std::endl;
     std::cout << "¿Cuál es el código del producto?" << std::endl;
-    std::cin >> codigoNuevo;
+    std::cin >> codigoNuevoString;
+    std::cin.ignore();
+
+    try{
+
+        codigoNuevo = std::stoi(codigoNuevoString);
+
+    }
+
+    catch(std::exception &e){
+
+        std::cout << "\nEl código tiene que ser númerico, no se aplicará la operación." << std::endl;
+        return;
+
+    }
 
     for(int i = 0; i < cantidadInventario; i++){
 
@@ -345,19 +417,65 @@ void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *prec
 
     else{
 
+        if(codigoNuevo <= 0){
+
+            std::cout << "\nEl código que estableciste no es válido, se cancelará la operación." << std::endl;
+            return;
+
+        }
+
         std::cout << "¿Cuál es el nombre del producto?" << std::endl;
-        std::cin.ignore();
         std::getline(std::cin, nombreNuevo);
 
+
         std::cout << "¿Cuál es el stock inicial del producto?" << std::endl;
-        std::cin >> stockNuevo;
+        std::cin >> stockNuevoString;
         std::cin.ignore();
 
+        try{
+
+            stockNuevo = std::stoi(stockNuevoString);
+
+        }
+
+        catch(std::exception &e){
+
+            std::cout << "\nEl stock debe de ser un valor numérico, no se aplicará la operación." << std::endl;
+            return;
+
+        }
+
+
+        if(stockNuevo < 1){
+
+            std::cout << "\nLa cantidad de Stock debe de ser mínimo de 1, no menos, se cancelará la operación." << std::endl;
+            return;
+
+        }
 
         std::cout << "¿Cuál es el precio unitario del producto?" << std::endl;
-        std::cin >> precioNuevo;
+        std::cin >> precioNuevoString;
         std::cin.ignore();
 
+        try{
+
+            precioNuevo = std::stof(precioNuevoString);
+
+        }
+
+        catch(std::exception &e){
+
+            std::cout << "\nNo ingresaste una opción válida de precio, se cancelará la operación." << std::endl;
+            return;
+
+        }
+
+        if(precioNuevo <= 0){
+
+            std::cout << "\nEl precio especificado para el producto es inválido, tiene que ser mayor a 0, se cancelará la operación." << std::endl;
+            return;
+
+        }
 
         std::cout << "¿Cuál es el código del almacen en el que se encuentra ubicado?" << std::endl;
         std::getline(std::cin, ubicacionNuevo);
@@ -412,9 +530,29 @@ void registrarNuevo(int *codigo, std::string *nombre, int *cantidad, float *prec
 void reporteBajoStock(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
     int umbralDefinido = 0;
+    std::string umbralDefinidoString;
 
     std::cout << "\nIngrese el umbral numérico para listar los productos: ";
-    std::cin >> umbralDefinido;
+    std::cin >> umbralDefinidoString;
+
+    try{
+
+        umbralDefinido = std::stoi(umbralDefinidoString);
+
+    }
+
+    catch(std::exception &e){
+
+        std::cout << "\nNo ingresaste un umbral válido, cancelando operación." <<std::endl;
+        return;
+    }
+
+    if(umbralDefinido < 0){
+
+        std::cout << "El umbral definido debe de ser mayor a 0, cancelando operación." <<std::endl;
+        return;
+
+    }
 
     std::cout << "--- Reporte de Inventario ( stock menor a " << umbralDefinido << ") ---" << std::endl;
     std::cout << "Código | Nombre                    | Stock | Precio | Ubicación Almacén" << std::endl;
@@ -471,13 +609,13 @@ void encontrarMasBarato(int *codigo, std::string *nombre, int *cantidad, float *
 void guardarDatos(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
 
-    std::ofstream archivo("guardado.txt");
+    std::ofstream archivo("inventarios.txt");
 
     if(archivo.is_open()){
 
         for(int i = 0; i < cantidadInventario; i++){
 
-            archivo << codigo[i] << "," << nombre[i] << "," << cantidad[i] << "," << precio[i] << "," << ubicacionAlmacen[i] << std::endl;
+            archivo << codigo[i] << "," << ubicacionAlmacen[i] << "," << cantidad[i] << "," << precio[i] << "," << nombre[i] << std::endl;
 
         }
 
@@ -485,13 +623,13 @@ void guardarDatos(int *codigo, std::string *nombre, int *cantidad, float *precio
 
 }
 
-// funcion para obtener los datos del archivo de guardado.txt
+// funcion para obtener los datos del archivo de inventarios.txt
 void obtenerDatos(int *codigo, std::string *nombre, int *cantidad, float *precio, std::string  *ubicacionAlmacen){
 
 
-    std::cout << "\nCargando inventario desde " << "'" << "guardado.txt" << "'" << std::endl; 
+    std::cout << "\nCargando inventario desde " << "'" << "inventarios.txt" << "'" << std::endl; 
 
-    std::ifstream archivo("guardado.txt");
+    std::ifstream archivo("inventarios.txt");
 
     std::string dato; // almacena la cadena entera antes del \n, ejemplo: codigo,nombre,cantidad,precio,ubicacionAlmacen.
 
@@ -508,6 +646,8 @@ void obtenerDatos(int *codigo, std::string *nombre, int *cantidad, float *precio
 
         while(std::getline(archivo, dato)){
 
+
+
             int contador = 0;
 
             for(long unsigned int i = 0; i < dato.length(); i++){
@@ -523,10 +663,13 @@ void obtenerDatos(int *codigo, std::string *nombre, int *cantidad, float *precio
 
             // quebrar las cadenas en partes basandose en los indices de las comas en indiceGuardian.
             std::string codigoEncontrado = dato.substr(0, indiceGuardian[0]);
-            std::string nombreEncontrado = dato.substr(indiceGuardian[0]+1, indiceGuardian[1]-1 - indiceGuardian[0]);
-            std::string cantidadEncontrado = dato.substr(indiceGuardian[1]+1, indiceGuardian[2]-1 - indiceGuardian[1]);
-            std::string precioEncontrado = dato.substr(indiceGuardian[2]+1, indiceGuardian[3]-1 - indiceGuardian[2]);
-            std::string ubicacionEncontrado = dato.substr(indiceGuardian[3]+1);
+            std::string ubicacionEncontrado = dato.substr(indiceGuardian[0]+1, indiceGuardian[1]-1 -indiceGuardian[0]);
+            std::string nombreEncontrado = dato.substr(indiceGuardian[1]+1, indiceGuardian[2]-1 - indiceGuardian[1]);
+            std::string cantidadEncontrado = dato.substr(indiceGuardian[2]+1, indiceGuardian[3]-1 - indiceGuardian[2]);
+            std::string precioEncontrado = dato.substr(indiceGuardian[3]+1);
+            
+
+            
 
 
             try{
@@ -538,27 +681,30 @@ void obtenerDatos(int *codigo, std::string *nombre, int *cantidad, float *precio
                 cantidad[cantidadInventario] = std::stoi(cantidadEncontrado);
                 precio[cantidadInventario] = std::stof(precioEncontrado);
                 ubicacionAlmacen[cantidadInventario] = ubicacionEncontrado;
+
+
+                if(std::stoi(cantidadEncontrado) > 50){
+
+                    std::cout << "WARNING: el producto " << nombre[cantidadInventario] << " tiene sobre stock." << std::endl;
+
+                }
                     
                 cantidadInventario++;
 
             }
 
-            catch(std::exception &e){
-
-                std::cout << "\nHubo un error con la obtención de los datos: " << e.what() << std::endl;
-
-            }
+            catch(std::exception &e){}
 
         }
 
         if(cantidadInventario > 0){
 
-            std::cout << "Inventario cargado exitosamente. " << cantidadInventario << " productos encontrados." << std::endl;
+            std::cout << "\nInventario cargado exitosamente. " << cantidadInventario << " productos encontrados." << std::endl;
 
         }
         else{
 
-            std::cout << "No se encontraron productos en el archivo de guardado.txt" << std::endl;
+            std::cout << "No se encontraron productos en el archivo de inventarios.txt" << std::endl;
 
         }
         
